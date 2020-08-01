@@ -8,26 +8,56 @@ trigger:
 
 variables:
   # Azure Resource Manager connection created during pipeline creation
-  azureServiceConnectionId: '825d6c6b-7011-4c27-9e50-775c320563d9'
-  
-  # Web app name
-  webAppName: 'csapiapp01-d'
+  azureSubscription: '825d6c6b-7011-4c27-9e50-775c320563d9'
 
   # Agent VM image name
-  vmImageName: 'vs2017-win2016'
+  vmImageName: 'ubuntu-latest'
 
   # Environment name
-  environmentName: 'csapiapp01-d'
+  environmentName: 'cloudrestapp-d'
 
   # Project root folder. Point to the folder containing manage.py file.
   projectRoot: $(System.DefaultWorkingDirectory)
   
-  # Python version: 3.6
+  # Python version: 3.7
   pythonVersion: '3.7'
 
   appType: 'webAppLinux'
 
 stages:
+- stage: Provision
+  displayName: Create Infrastructure
+  jobs:
+  - job: Provision
+    pool:
+      vmImage: $(vmImageName)
+    steps:
+    - task: PowerShell@2
+      displayName: "Read parameters from JSON"
+      name: GetProjectParameters
+      inputs:
+        pwsh: true
+        filepath: "InfraSetupScripts/Read-Parameters.ps1"
+        arguments: "-ParameterFilePath 'InfraSetupScripts/parameters.json'" 
+    
+    - task: AzureCLI@2
+      displayName: "Create Resource Group"
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptType: "pscore"
+        scriptLocation: "scriptPath"
+        scriptPath: "InfraSetupScripts/Create-ResourceGroup.ps1"
+        arguments: -ResourceGroupName $(ResourceGroupName) -Location $(Location) 
+
+    - task: AzureCLI@2
+      displayName: "Create WebApp"
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptType: "pscore"
+        scriptLocation: "scriptPath"
+        scriptPath: "InfraSetupScripts/Create-AzureWebApp.ps1"
+        arguments: -ResourceGroupName $(ResourceGroupName) -WebAppName $(WebAppName) -ServicePlanName $(ServicePlanName) -RunTime "$(RunTime)"
+
 - stage: Build
   displayName: Build stage
   jobs:

@@ -1,10 +1,10 @@
 {
     "version":"1.0",
     "parameters":{
-        "ResourceGroupName":"test-rg-d",
+        "ResourceGroupName":"cloudrestappv1-dev-rg",
         "Location":"WestEurope",
-        "WebAppName":"test-webapp",
-        "ServicePlanName":"test-serv-plan",
-        "RunTime":"python|3.6"
+        "WebAppName":"cloudrestapp-dev-01",
+        "ServicePlanName":"cloudrestapp-dev-plan-linux",
+        "RunTime":"python|3.7"
     }    
 }
