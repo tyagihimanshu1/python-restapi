@@ -1,4 +1,5 @@
 pip>=20.1b1
 django
 djangorestframework
+drf_yasg
 requests==2.20.0

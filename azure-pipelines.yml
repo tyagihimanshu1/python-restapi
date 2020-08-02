@@ -47,7 +47,16 @@ stages:
         scriptType: "pscore"
         scriptLocation: "scriptPath"
         scriptPath: "InfraSetupScripts/Create-ResourceGroup.ps1"
-        arguments: -ResourceGroupName $(ResourceGroupName) -Location $(Location) 
+        arguments: -ResourceGroupName $(ResourceGroupName) -Location $(Location)
+        
+    - task: AzureCLI@2
+      displayName: "Create App Service plan"
+      inputs:
+        azureSubscription: $(azureSubscription)
+        scriptType: "pscore"
+        scriptLocation: "scriptPath"
+        scriptPath: "InfraSetupScripts/Create-AppServicePlan.ps1"
+        arguments: -ResourceGroupName $(ResourceGroupName) -ServicePlanName $(ServicePlanName)
 
     - task: AzureCLI@2
       displayName: "Create WebApp"
